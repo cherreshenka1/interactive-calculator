@@ -127,7 +127,7 @@ export default function App() {
     <div className="calculator-shell">
       <header className="product-topbar"><a href="#workspace">Расчёт / Оценка проекта</a><nav><a href="#workspace">Рабочая область</a><a href="#open-data">Справочник</a><a href="https://cherreshenka1.github.io/portfolio/">Портфолио ↗</a></nav><span className="monogram">АБ</span></header>
       <header className="hero-block">
-        <p className="eyebrow">Interactive calculator</p>
+        <p className="eyebrow">Расчёт по параметрам</p>
         <h1>Сколько будет стоить ваш проект?</h1>
         <p className="hero-text">Выберите услугу и параметры. В расчёте видно, за что вы платите; понравившийся вариант можно сохранить.</p>
       </header>
