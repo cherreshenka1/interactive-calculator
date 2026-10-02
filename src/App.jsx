@@ -1,3 +1,4 @@
+import OpenContext from './OpenContext.jsx'
 import { useEffect, useMemo, useState } from 'react'
 
 const STORAGE_KEY = 'interactive-calculator-saved'
@@ -124,13 +125,14 @@ export default function App() {
 
   return (
     <div className="calculator-shell">
+      <header className="product-topbar"><a href="#workspace">Расчёт / Оценка проекта</a><nav><a href="#workspace">Рабочая область</a><a href="#open-data">Справочник</a><a href="https://cherreshenka1.github.io/portfolio/">Портфолио ↗</a></nav><span className="monogram">АБ</span></header>
       <header className="hero-block">
         <p className="eyebrow">Interactive calculator</p>
         <h1>Сколько будет стоить ваш проект?</h1>
         <p className="hero-text">Выберите услугу и параметры. В расчёте видно, за что вы платите; понравившийся вариант можно сохранить.</p>
       </header>
 
-      <main className="workspace-grid">
+      <main id="workspace" className="workspace-grid">
         <section className="panel">
           <div className="mode-switch">
             {modes.map((item) => (
@@ -304,6 +306,7 @@ export default function App() {
           </div>
         </aside>
       </main>
+      <OpenContext/>
     </div>
   )
 }
