@@ -48,7 +48,7 @@ function getCalculation(mode, values) {
 }
 
 function sendRequest(payload) {
-  console.log('[Analytics] lead_submit', payload)
+  // Demo submission; no contact data leaves this browser.
   return new Promise((resolve) => {
     window.setTimeout(() => {
       resolve({ success: true, id: `REQ-${Date.now().toString().slice(-5)}` })
@@ -61,7 +61,7 @@ export default function App() {
   const [values, setValues] = useState({
     pages: 6,
     complexity: 2,
-    urgent: true,
+    urgent: false,
     distance: 120,
     weight: 8,
     area: 32,
@@ -116,9 +116,9 @@ export default function App() {
     }
 
     setFormError('')
-    setRequestStatus('Отправляем заявку...')
+    setRequestStatus('Проверяем данные…')
     const response = await sendRequest({ ...formData, service: activeMode.title, quote: result.total })
-    setRequestStatus(`Заявка ${response.id} отправлена. Я свяжусь с тобой в ближайшее время.`)
+    setRequestStatus(`Демо-заявка ${response.id} сформирована. Данные никуда не отправлены.`)
     setFormData({ name: '', phone: '', email: '' })
   }
 
@@ -126,11 +126,8 @@ export default function App() {
     <div className="calculator-shell">
       <header className="hero-block">
         <p className="eyebrow">Interactive calculator</p>
-        <h1>Калькулятор стоимости услуг с real-time расчётом и формой заявки</h1>
-        <p className="hero-text">
-          Три сценария расчёта, сохранение результатов, анимация итоговой суммы и
-          имитация отправки заявки на backend.
-        </p>
+        <h1>Сколько будет стоить ваш проект?</h1>
+        <p className="hero-text">Выберите услугу и параметры. В расчёте видно, за что вы платите; понравившийся вариант можно сохранить.</p>
       </header>
 
       <main className="workspace-grid">
@@ -232,6 +229,12 @@ export default function App() {
             <p>Итоговый расчёт</p>
             <strong>{result.total.toLocaleString('ru-RU')} ₽</strong>
             <span>{result.description}</span>
+            <div className="breakdown">
+              <div><span>Базовая стоимость</span><b>{activeMode.base.toLocaleString('ru-RU')} ₽</b></div>
+              <div><span>{mode === 'site' ? 'Страницы' : mode === 'delivery' ? 'Расстояние' : 'Площадь'}</span><b>{(mode === 'site' ? values.pages*4200 : mode === 'delivery' ? values.distance*38 : values.area*1450).toLocaleString('ru-RU')} ₽</b></div>
+              <div><span>{mode === 'site' ? 'Интеграции' : mode === 'delivery' ? 'Вес груза' : 'Материалы / сложность'}</span><b>{(mode === 'site' ? values.complexity*12000 : mode === 'delivery' ? values.weight*120 : values.complexity*9000).toLocaleString('ru-RU')} ₽</b></div>
+              <div><span>Срочность</span><b>{(values.urgent ? mode === 'site' ? 18000 : mode === 'delivery' ? 1600 : 12000 : 0).toLocaleString('ru-RU')} ₽</b></div>
+            </div>
             <button type="button" className="save-btn" onClick={saveQuote}>
               Сохранить расчёт
             </button>
@@ -239,8 +242,8 @@ export default function App() {
         </section>
 
         <aside className="panel">
-          <h2>Форма заявки</h2>
-          <form className="lead-form" onSubmit={handleSubmit}>
+          <h2>Проверить заявку</h2>
+          <p className="demo-note">Учебные тарифы. Эта форма не отправляет заявку; используйте вымышленные контакты.</p><form className="lead-form" onSubmit={handleSubmit}>
             <label>
               Имя
               <input
@@ -272,12 +275,12 @@ export default function App() {
             </label>
 
             <button type="submit" className="submit-btn">
-              Отправить заявку
+              Проверить демо-заявку
             </button>
           </form>
 
-          {formError && <p className="error-banner">{formError}</p>}
-          {requestStatus && <p className="success-banner">{requestStatus}</p>}
+          {formError && <p role="alert" className="error-banner">{formError}</p>}
+          {requestStatus && <p role="status" className="success-banner">{requestStatus}</p>}
 
           <div className="saved-list">
             <div className="saved-head">
@@ -294,7 +297,7 @@ export default function App() {
                     <p>{quote.title}</p>
                     <span>{quote.description}</span>
                   </div>
-                  <strong>{quote.total.toLocaleString('ru-RU')} ₽</strong>
+                  <strong>{quote.total.toLocaleString('ru-RU')} ₽</strong><button type="button" onClick={() => setSavedQuotes(current => current.filter(item => item.id !== quote.id))} aria-label={`Удалить расчёт ${quote.title}`}>Удалить</button>
                 </article>
               ))
             )}
