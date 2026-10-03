@@ -58,6 +58,7 @@ function sendRequest(payload) {
 }
 
 export default function App() {
+  const [step,setStep]=useState(1)
   const [mode, setMode] = useState('site')
   const [values, setValues] = useState({
     pages: 6,
@@ -123,31 +124,9 @@ export default function App() {
     setFormData({ name: '', phone: '', email: '' })
   }
 
-  return (
-    <div className="calculator-shell">
-      <header className="product-topbar"><a href="#workspace">Расчёт / Оценка проекта</a><nav><a href="#workspace">Рабочая область</a><a href="#open-data">Справочник</a><a href="https://cherreshenka1.github.io/portfolio/">Портфолио ↗</a></nav><span className="monogram">АБ</span></header>
-      <header className="hero-block">
-        <p className="eyebrow">Расчёт по параметрам</p>
-        <h1>Сколько будет стоить ваш проект?</h1>
-        <p className="hero-text">Выберите услугу и параметры. В расчёте видно, за что вы платите; понравившийся вариант можно сохранить.</p>
-      </header>
-
-      <main id="workspace" className="workspace-grid">
-        <section className="panel">
-          <div className="mode-switch">
-            {modes.map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                className={item.id === mode ? `mode-btn active ${item.accent}` : 'mode-btn'}
-                onClick={() => setMode(item.id)}
-              >
-                {item.title}
-              </button>
-            ))}
-          </div>
-
-          <div className="controls-grid">
+  return <div className="calculator-shell"><header className="calc-nav"><a href="#workspace">расчёт / бюро оценки</a><a href="https://cherreshenka1.github.io/portfolio/">Портфолио ↗</a></header><main id="workspace" className="quote-flow"><aside className="quote-intro"><p>Понятная стоимость до старта</p><h1>Всё начинается<br/>с расчёта.</h1><p>Три шага от идеи до прозрачной сметы.</p><ol>{['Выберите задачу','Уточните объём','Посмотрите смету'].map((text,i)=><li className={step===i+1?'active':''} key={text}><button onClick={()=>setStep(i+1)}>{String(i+1).padStart(2,'0')} <span>{text}</span></button></li>)}</ol><small>Учебные тарифы, без отправки данных.</small></aside><section className="quote-paper"><p className="step-counter">Шаг {step} / 3</p>
+    {step===1&&<><h2>Что нужно посчитать?</h2><div className="mode-switch">{modes.map((item,i)=><button key={item.id} className={item.id===mode?'mode-btn active':'mode-btn'} onClick={()=>{setMode(item.id);setStep(2)}}><span>0{i+1}</span><strong>{item.title}</strong><small>от {item.base.toLocaleString('ru-RU')} ₽</small><b>→</b></button>)}</div></>}
+    {step===2&&<><h2>{activeMode.title}</h2>          <div className="controls-grid">
             {mode === 'site' && (
               <>
                 <RangeControl
@@ -227,7 +206,8 @@ export default function App() {
             </label>
           </div>
 
-          <div className="result-card" key={`${mode}-${result.total}-${values.urgent}`}>
+<button className="submit-btn" onClick={()=>setStep(3)}>Показать смету →</button></>}
+    {step===3&&<><h2>Ваша предварительная смета</h2>          <div className="result-card" key={`${mode}-${result.total}-${values.urgent}`}>
             <p>Итоговый расчёт</p>
             <strong>{result.total.toLocaleString('ru-RU')} ₽</strong>
             <span>{result.description}</span>
@@ -241,9 +221,8 @@ export default function App() {
               Сохранить расчёт
             </button>
           </div>
-        </section>
-
-        <aside className="panel">
+<button className="back-step" onClick={()=>setStep(2)}>← Изменить параметры</button></>}
+            <details className="quote-details"><summary>Заявка и сохранённые варианты</summary>
           <h2>Проверить заявку</h2>
           <p className="demo-note">Учебные тарифы. Эта форма не отправляет заявку; используйте вымышленные контакты.</p><form className="lead-form" onSubmit={handleSubmit}>
             <label>
@@ -304,11 +283,8 @@ export default function App() {
               ))
             )}
           </div>
-        </aside>
-      </main>
-      <OpenContext/>
-    </div>
-  )
+        </details>
+</section></main><details className="sources"><summary>О расчётах и источниках</summary><OpenContext/></details></div>
 }
 
 function RangeControl({ label, value, min, max, step, unit, onChange }) {
